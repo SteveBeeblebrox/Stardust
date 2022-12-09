@@ -95,6 +95,7 @@ window.addEventListener('load', (async function() {
 
     // `pointer-events` is none in CSS, this manually triggers the click event by matching x and y pos
     document.body.addEventListener('click', function(event) {
+        if(!event.altKey) return;
         const {x:eventX, y:eventY} = event;
         const target = [...document.querySelectorAll(`[${HIGHLIGHT_ATTR}]`)].find(function(element) {
             const {left:elementLeft, width:elementWidth, top:elementTop, height:elementHeight} = element.getBoundingClientRect();
