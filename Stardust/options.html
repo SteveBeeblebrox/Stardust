@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Stardust Options</title>
+        <style>
+            #status {
+                visibility: visible;
+                margin: 0.25em 0em;
+                font-style: italic;
+            }
+            input {
+                width: -webkit-fill-available;
+                border-top: none;
+                border-left: none;
+                border-right: none;
+                outline: none;
+            }
+        </style>
+    </head>
+    <body>
+        <label>
+            Stardust Server:
+            <input type="text" id="stardustServer" name="stardustServer">
+        </label>
+
+        <div id="status" name="save">&nbsp;</div>
+        <button onclick="save()">Save</button>
+
+        <script src="options.js"></script>
+    </body>
+</html>

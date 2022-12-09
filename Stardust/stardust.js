@@ -1,12 +1,13 @@
-(async function() {
+window.addEventListener('load', (async function() {
     const HIGHLIGHT_ATTR = 'data-stardust-highlight', HIGHLIGHT_VAR = '--stardust-highlight-color';
     // Creates HTML Element with type `tagName` and copies `properties` to that element
     function HTML(tagName, properties = {}) {
         return Object.assign(document.createElement(tagName), properties);
     }
 
+    const stardustServer = (await chrome.storage.sync.get()).stardustServer;
     // Get config and targets
-    const config = await (await fetch('/stardust.json')).json();
+    const config = await (await fetch(`${stardustServer}/stardust.json`, {cache: 'reload'})).json();
 
     // Inject Stardust CSS
     document.head.appendChild(HTML('style', {
@@ -110,4 +111,4 @@
             window.open(`${config.route}?${options.toString()}`, '_blank');
         }
     }, false);
-})().catch(e=>console.error(e));
+})().catch(e=>console.error(e)));

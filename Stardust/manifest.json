@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "Stardust",
+    "description": "Your link to the world! Automatically highlights and links text to a Stardust server.",
+    "version": "1.0",
+    "permissions": [
+        "storage"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["https://*/*"],
+            "all_frames": true,
+            "run_at": "document_end",
+            "js": ["stardust.js"]
+        }
+    ],
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": false
+    }
+}
