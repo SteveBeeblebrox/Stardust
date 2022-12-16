@@ -1,0 +1,57 @@
+#! /bin/bash
+
+# === Util Section === #
+function findext() {
+    find "$1" | grep -P '\.'$2'$'
+}
+
+function tsc() {
+    ./mtsc.exe --target=es2019 --jsx=JSX.createElement $1 --minify --out=- > $(./pt.exe $1 ts~js '(?<=\.m|\.)tsx?$~~js' '(?=\..?js.?$)~~.min')
+}
+# === Pre Build Section === #
+echo 'Preparing...'
+
+mkdir -p external
+mkdir -p builds
+mkdir -p builds/Stardust
+
+JSX_SRC='https://stevebeeblebrox.github.io/assets/ts/jsx.ts'
+MTSC_SRC='https://github.com/SteveBeeblebrox/MTSC/releases/download/v4.9.4/mtsc.exe'
+PT_SRC='https://github.com/SteveBeeblebrox/PT/releases/download/v1.1.0/pt.exe'
+
+# Get Latest JSX
+if [ ! $(ls . | grep jsx.ts) ]; then
+    echo "Downloading jsx.ts from $JSX_SRC..."
+    curl $JSX_SRC > external/jsx.ts 2>/dev/null
+fi
+
+# Get mtsc
+if [ ! $(ls . | grep mtsc.exe) ]; then
+    echo "Downloading mtsc.exe from $MTSC_SRC."
+    wget $MTSC_SRC 2>/dev/null
+fi
+
+# Get pt
+if [ ! $(ls external | grep pt.exe) ]; then
+    echo "Downloading pt.exe from $MTSC_SRC."
+    wget $PT_SRC 2>/dev/null
+fi
+
+# === Build Section === #
+echo "Building..."
+
+cp -R src/. builds/Stardust/
+
+for file in $(findext uilds/Stardust ts); do
+    tsc $file
+    rm $file
+done
+
+for file in $(findext builds/Stardust tsx); do
+    tsc $file
+    rm $file
+done
+
+# === Post Build Section === #
+echo 'Finishing...'
+echo 'Done.'
