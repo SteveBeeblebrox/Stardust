@@ -32,7 +32,7 @@ if [ ! $(ls . | grep mtsc.exe) ]; then
 fi
 
 # Get pt
-if [ ! $(ls external | grep pt.exe) ]; then
+if [ ! $(ls . | grep pt.exe) ]; then
     echo "Downloading pt.exe from $MTSC_SRC."
     wget $PT_SRC 2>/dev/null
 fi
@@ -42,7 +42,7 @@ echo "Building..."
 
 cp -R src/. builds/Stardust/
 
-for file in $(findext uilds/Stardust ts); do
+for file in $(findext builds/Stardust ts); do
     tsc $file
     rm $file
 done
