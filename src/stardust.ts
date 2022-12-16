@@ -1,3 +1,3 @@
 namespace Stardust {
-    //#include external/jsx.ts
+    //#include ../external/jsx.ts
 }

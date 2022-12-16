@@ -6,7 +6,7 @@ function findext() {
 }
 
 function tsc() {
-    ./mtsc.exe --target=es2019 --jsx=JSX.createElement $1 --minify --out=- > $(./pt.exe $1 ts~js '(?<=\.m|\.)tsx?$~~js' '(?=\..?js.?$)~~.min')
+    ./mtsc.exe -v --target=es2019 --jsx=JSX.createElement $1 --minify --include-directory=src --out=- > $(./pt.exe $1 ts~js '(?<=\.m|\.)tsx?$~~js' '(?=\..?js.?$)~~.min')
 }
 # === Pre Build Section === #
 echo 'Preparing...'
@@ -20,7 +20,7 @@ MTSC_SRC='https://github.com/SteveBeeblebrox/MTSC/releases/download/v4.9.4/mtsc.
 PT_SRC='https://github.com/SteveBeeblebrox/PT/releases/download/v1.1.0/pt.exe'
 
 # Get Latest JSX
-if [ ! $(ls . | grep jsx.ts) ]; then
+if [ ! $(ls external | grep jsx.ts) ]; then
     echo "Downloading jsx.ts from $JSX_SRC..."
     curl $JSX_SRC > external/jsx.ts 2>/dev/null
 fi
