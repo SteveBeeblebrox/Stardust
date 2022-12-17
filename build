@@ -6,7 +6,11 @@ function findext() {
 }
 
 function tsc() {
-    ./mtsc.exe -v --target=es2019 --jsx=JSX.createElement $1 --minify --include-directory=src --out=- > $(./pt.exe $1 ts~js '(?<=\.m|\.)tsx?$~~js' '(?=\..?js.?$)~~.min')
+    ./mtsc.exe -v --target=es2019 --jsx=JSX.createElement "$1" --minify --include-directory=src --out=- > $(./pt.exe "$1" ts~js '(?<=\.m|\.)tsx?$~~js' '(?=\..?js.?$)~~.min')
+}
+
+function less() {
+    ./mless.exe "$1" --out= > $(./pt.exe "$1" less~css -e css)
 }
 # === Pre Build Section === #
 echo 'Preparing...'
@@ -18,6 +22,7 @@ mkdir -p builds/Stardust
 JSX_SRC='https://stevebeeblebrox.github.io/assets/ts/jsx.ts'
 MTSC_SRC='https://github.com/SteveBeeblebrox/MTSC/releases/download/v4.9.4/mtsc.exe'
 PT_SRC='https://github.com/SteveBeeblebrox/PT/releases/download/v1.1.0/pt.exe'
+MLESS_SRC='https://github.com/SteveBeeblebrox/MLESS/releases/download/4.1.2/mless.exe'
 
 # Get Latest JSX
 if [ ! $(ls external | grep jsx.ts) ]; then
@@ -37,6 +42,12 @@ if [ ! $(ls . | grep pt.exe) ]; then
     wget $PT_SRC 2>/dev/null
 fi
 
+# Get mless
+if [ ! $(ls . | grep mless.exe) ]; then
+    echo "Downloading mless.exe from $MLESS_SRC."
+    wget $MLESS_SRC 2>/dev/null
+fi
+
 # === Build Section === #
 echo "Building..."
 
@@ -49,6 +60,11 @@ done
 
 for file in $(findext builds/Stardust tsx); do
     tsc $file
+    rm $file
+done
+
+for file in $(findext builds/Stardust less); do
+    less $file
     rm $file
 done
 

@@ -1,0 +1,10 @@
+[data-stardust-highlight] {
+    border-bottom: 0.15em solid var(--stardust-highlight-color, magenta);
+    position: absolute;
+    background-color: unset;
+    pointer-events: var(--stardust-pointer-events, none);
+    z-index: 9999999;
+    &:hover {
+        filter: brightness(200%)
+    }
+}
