@@ -1,6 +1,6 @@
 (async function() {
     console.log('Stardust loading...');
-    
+
     //#include ../external/jsx.ts
 
     // Toggle interactivity based on key hold
@@ -69,11 +69,19 @@
         }
     }
     
-    // (Unused) removes Stardust highlights
+    // Removes existing Stardust highlights
     function removeHighlights() {
-        Array.from(document.querySelectorAll('data-stardust-highlight')).forEach(e=>e.remove());
+        Array.from(document.querySelectorAll('[data-stardust-highlight]')).forEach(e=>e.remove());
     }
 
-    highlightMatchingText('rfc', 'RFC ?\\d+', 'cadetblue')
+    // Runs the highlighter
+    function run() {
+        removeHighlights();
+        highlightMatchingText('rfc', 'RFC ?\\d+', 'cadetblue')
+    }
     
+    // Run on load
+    window.addEventListener('load', run);
+    // Run on resize
+    window.addEventListener('resize', run);
 })().catch(e=>console.error(e));
