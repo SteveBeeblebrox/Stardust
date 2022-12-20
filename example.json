@@ -1,9 +1,0 @@
-{
-    "route": "https://stevebeeblebrox.github.io/stardust_temp/index.html",
-    "targets": {
-        "rfc": {
-            "pattern": "RFC ?\\d+",
-            "color": "cadetblue"
-        }
-    }
-}
