@@ -6,7 +6,7 @@ function findext() {
 }
 
 function tsc() {
-    ./mtsc.exe -v --target=es2019 --jsx=JSX.createElement "$1" --minify --include-directory=src --out=- > $(./pt.exe "$1" ts~js '(?<=\.m|\.)tsx?$~~js' '(?=\..?js.?$)~~.min')
+    ./mtsc.exe -v --target=es2019 --jsx=JSX.createElement "$1" --include-directory=src --minify --out=- > $(./pt.exe "$1" ts~js '(?<=\.m|\.)tsx?$~~js' '(?=\..?js.?$)~~.min')
 }
 
 function less() {
@@ -19,10 +19,17 @@ mkdir -p external
 mkdir -p builds
 mkdir -p builds/Stardust
 
+ELEMENTS_URL='https://stevebeeblebrox.github.io/assets/ts/elements.ts'
 JSX_SRC='https://stevebeeblebrox.github.io/assets/ts/jsx.ts'
 MTSC_SRC='https://github.com/SteveBeeblebrox/MTSC/releases/download/v4.9.4/mtsc.exe'
 PT_SRC='https://github.com/SteveBeeblebrox/PT/releases/download/v1.1.0/pt.exe'
 MLESS_SRC='https://github.com/SteveBeeblebrox/MLESS/releases/download/4.1.2/mless.exe'
+
+# Get Latest Shadow Element
+if [ ! $(ls external | grep elements.ts) ]; then
+    echo "Downloading elements.ts (Shadow) from $ELEMENTS_URL..."
+    curl $ELEMENTS_URL > external/elements.ts 2>/dev/null
+fi
 
 # Get Latest JSX
 if [ ! $(ls external | grep jsx.ts) ]; then
@@ -53,6 +60,11 @@ echo "Building..."
 
 cp -R src/. builds/Stardust/
 
+for file in $(findext builds/Stardust less); do
+    less $file
+    rm $file
+done
+
 for file in $(findext builds/Stardust ts); do
     tsc $file
     rm $file
@@ -60,11 +72,6 @@ done
 
 for file in $(findext builds/Stardust tsx); do
     tsc $file
-    rm $file
-done
-
-for file in $(findext builds/Stardust less); do
-    less $file
     rm $file
 done
 
