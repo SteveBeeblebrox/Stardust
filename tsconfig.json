@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "lib": ["ESNext","DOM"],
+        "downlevelIteration": true,
+        "target":"ESnext",
+        "jsx": "react",
+        "jsxFactory": "JSX.createElement",
+        "jsxFragmentFactory": "null"
+    },
+}

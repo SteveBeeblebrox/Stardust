@@ -1,0 +1,73 @@
+#! /bin/bash
+
+# === Util Section === #
+function findext() {
+    find "$1" | grep -P '\.'$2'$'
+}
+
+function tsc() {
+    ./mtsc.exe -v --target=es2019 --jsx=JSX.createElement "$1" --minify --include-directory=src --out=- > $(./pt.exe "$1" ts~js '(?<=\.m|\.)tsx?$~~js' '(?=\..?js.?$)~~.min')
+}
+
+function less() {
+    ./mless.exe "$1" --out= > $(./pt.exe "$1" less~css -e css)
+}
+# === Pre Build Section === #
+echo 'Preparing...'
+
+mkdir -p external
+mkdir -p builds
+mkdir -p builds/Stardust
+
+JSX_SRC='https://stevebeeblebrox.github.io/assets/ts/jsx.ts'
+MTSC_SRC='https://github.com/SteveBeeblebrox/MTSC/releases/download/v4.9.4/mtsc.exe'
+PT_SRC='https://github.com/SteveBeeblebrox/PT/releases/download/v1.1.0/pt.exe'
+MLESS_SRC='https://github.com/SteveBeeblebrox/MLESS/releases/download/4.1.2/mless.exe'
+
+# Get Latest JSX
+if [ ! $(ls external | grep jsx.ts) ]; then
+    echo "Downloading jsx.ts from $JSX_SRC..."
+    curl $JSX_SRC > external/jsx.ts 2>/dev/null
+fi
+
+# Get mtsc
+if [ ! $(ls . | grep mtsc.exe) ]; then
+    echo "Downloading mtsc.exe from $MTSC_SRC."
+    wget $MTSC_SRC 2>/dev/null
+fi
+
+# Get pt
+if [ ! $(ls . | grep pt.exe) ]; then
+    echo "Downloading pt.exe from $MTSC_SRC."
+    wget $PT_SRC 2>/dev/null
+fi
+
+# Get mless
+if [ ! $(ls . | grep mless.exe) ]; then
+    echo "Downloading mless.exe from $MLESS_SRC."
+    wget $MLESS_SRC 2>/dev/null
+fi
+
+# === Build Section === #
+echo "Building..."
+
+cp -R src/. builds/Stardust/
+
+for file in $(findext builds/Stardust ts); do
+    tsc $file
+    rm $file
+done
+
+for file in $(findext builds/Stardust tsx); do
+    tsc $file
+    rm $file
+done
+
+for file in $(findext builds/Stardust less); do
+    less $file
+    rm $file
+done
+
+# === Post Build Section === #
+echo 'Finishing...'
+echo 'Done.'
