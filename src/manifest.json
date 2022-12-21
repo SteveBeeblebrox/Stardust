@@ -11,7 +11,7 @@
             "matches": ["https://*/*"],
             "all_frames": true,
             "run_at": "document_end",
-            "js": ["stardust.js"]
+            "js": ["stardust.min.js"]
         }
     ],
     "options_ui": {
