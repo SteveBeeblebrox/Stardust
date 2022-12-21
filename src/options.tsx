@@ -8,7 +8,7 @@ function save() {
         const status = $('#status');
         status.textContent = 'Options saved.';
         setTimeout(function() {
-            status.textContent = '\u00a0';
+            status.textContent = String.fromCharCode(160);
         }, 1500);
     });
 }
