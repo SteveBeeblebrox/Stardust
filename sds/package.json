@@ -1,0 +1,33 @@
+{
+  "name": "stardust-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevebeeblebrox/stardust.git"
+  },
+  "author": "Trin Wasinger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stevebeeblebrox/stardust/issues"
+  },
+  "homepage": "https://github.com/stevebeeblebrox/stardust#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-pty": "^1.0.0",
+    "ws": "^8.14.2",
+    "xterm": "^5.3.0",
+    "xterm-addon-attach": "^0.9.0",
+    "xterm-addon-fit": "^0.8.0",
+    "xterm-addon-search": "^0.13.0",
+    "xterm-addon-web-links": "^0.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.2"
+  }
+}
