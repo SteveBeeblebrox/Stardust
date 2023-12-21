@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        
+        <title>Local Terminal</title>
+
+        <script src="https://stevebeeblebrox.github.io/assets/js/kitsunecore.min.js"></script>
+        <link rel="stylesheet" href="/scripts/xterm/css/xterm.css" />
+        <script src="/scripts/xterm/lib/xterm.js"></script>
+        <script src="/scripts/xterm-addon-attach/lib/xterm-addon-attach.js"></script>
+        <script src="/scripts/xterm-addon-web-links/lib/xterm-addon-web-links.js"></script>
+        <script src="/scripts/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+        <style>
+            html, body {
+                background-color: black;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            ::-webkit-scrollbar {
+                display: none;
+            }
+            main {
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <main></main>
+        <script>
+            const title = document.title;
+            const xterm = new Terminal({ cursorBlink : true });
+            const socket = new WebSocket('ws://localhost:3000/connect-terminal');
+            let fitter;
+            
+            socket.$on('error', console.error);
+            socket.$on('open', function() {
+                fitter.fit();
+                xterm.write('**Connected**\r\n');
+                document.title = `${title} (Connected)`;
+            });
+            socket.$on('data', (event) => {
+                xterm.write(event.data);
+            });
+            socket.$on('close', function() {
+                xterm.write('\r\n**Disconnected**\r\n');
+                document.title = `${title} (Disconnected)`;
+            });
+
+            xterm.loadAddon(new AttachAddon.AttachAddon(socket));
+            xterm.loadAddon(new WebLinksAddon.WebLinksAddon());
+            xterm.loadAddon(fitter = new FitAddon.FitAddon());
+
+            xterm.onBell(chime);
+            xterm.onResize(function (event) {
+                socket.send(`%r${event.rows},${event.cols}`);
+            });
+
+            xterm.open($('main'));
+            window.$on('resize', () => {
+                fitter.fit();
+            });
+        </script>
+    </body>
+</html>

@@ -3,3 +3,4 @@ external/
 builds/
 test.html
 **/node_modules/**
+local/
