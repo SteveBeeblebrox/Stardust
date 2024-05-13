@@ -5,7 +5,7 @@
 
 const { dlopen } = Deno;
 
-const { symbols } = dlopen("/home/siana/Stardust/sdsnoop/target/release/libsdsnoop.so", {
+const { symbols } = dlopen("/home/siana/Stardust/sdsnoop/libsdsnoop.so", {
   add: {
     parameters: [
       'i32',
