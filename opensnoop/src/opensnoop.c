@@ -18,6 +18,8 @@ BPF_HASH(infotmp, u64, struct val_t);
 BPF_PERF_OUTPUT(events);
 int trace_entry(struct pt_regs *ctx, int dfd, const char __user *filename)
 {
+    bpf_trace_printk("Called open()");
+
     struct val_t val = {};
     u64 id = bpf_get_current_pid_tgid();
     u32 pid = id >> 32; // PID is higher part
@@ -32,6 +34,8 @@ int trace_entry(struct pt_regs *ctx, int dfd, const char __user *filename)
 };
 int trace_return(struct pt_regs *ctx)
 {
+    bpf_trace_printk("Exited open()");
+
     u64 id = bpf_get_current_pid_tgid();
     struct val_t *valp;
     struct data_t data = {};
