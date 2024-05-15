@@ -11,3 +11,4 @@ libbpf-dev
 
 
 https://github.com/sai-lab/syscall-exporter/tree/main
+linux-tools-common
