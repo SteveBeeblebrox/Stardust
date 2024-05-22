@@ -79,7 +79,7 @@ def getEvent(program,data):
 `);
 
 pyget(program,'events').open_perf_buffer(new Callback(function(_,cpu,data,size) {
-    console.log(getEvent(program,data))
+    console.log(arguments)
 }),...kwargs({page_cnt:64}));
 
 while(true) {

@@ -1115,7 +1115,7 @@ def getEvent(program,data):
     print(event.valid)
 `);
 pyget(program, 'events').open_perf_buffer(new Callback(function (_, cpu, data, size) {
-    console.log(getEvent(program, data));
+    console.log(arguments);
 }), ...kwargs({ page_cnt: 64 }));
 while (true) {
     program.perf_buffer_poll();
