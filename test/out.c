@@ -35,7 +35,7 @@ static struct data_t collect_data(const char __user *filename, int flags, int re
     u64 tsp = bpf_ktime_get_ns();
 
     struct bpf_pidns_info ns = {};
-    if(bpf_get_ns_current_pid_tgid(4, 4026532255, &ns, sizeof(struct bpf_pidns_info)))
+    if(bpf_get_ns_current_pid_tgid(PIDSTAT_DEV, PIDSTAT_INO, &ns, sizeof(struct bpf_pidns_info)))
     	return data;
     
     data.valid = 1;
@@ -46,9 +46,18 @@ static struct data_t collect_data(const char __user *filename, int flags, int re
     data.uid = bpf_get_current_uid_gid();
     data.nspid = ns.pid;
     data.flags = flags;
-    // data.ret = ret;
+    data.ret = ret;
 
     return data;
+}
+
+static int hook(void *ctx, const char __user *filename, int flags, int ret) {
+    struct data_t data = collect_data(filename, flags, ret);
+    if(data.uid == 0 || data.ret < 0) return 0;
+
+    events.perf_submit(ctx, &data, sizeof(data));
+
+    return 0;
 }
 
 #if defined(CONFIG_ARCH_HAS_SYSCALL_WRAPPER) && !defined(__s390x__)
@@ -58,38 +67,8 @@ KRETFUNC_PROBE(__x64_sys_open, struct pt_regs *regs, int ret) {
 #else
 KRETFUNC_PROBE(__x64_sys_open, const char __user *filename, int flags, int ret) {
 #endif
-    struct data_t data = collect_data(filename, flags, ret);
-
     
-    data.type = EVENT_ENTRY;
-    events.perf_submit(ctx, &data, sizeof(data));
-
-    if (data.name[0] != '/') { // Only need to expand relative paths
-        struct task_struct *task;
-        struct dentry *dentry;
-        int i;
-
-        task = (struct task_struct *)bpf_get_current_task_btf();
-        dentry = task->fs->pwd.dentry;
-
-        for (i = 1; i < MAX_ENTRIES; i++) {
-            bpf_probe_read_kernel(&data.name, sizeof(data.name), (void *)dentry->d_name.name);
-            data.type = EVENT_ENTRY;
-            events.perf_submit(ctx, &data, sizeof(data));
-
-            if (dentry == dentry->d_parent) { // At root directory
-                break;
-            }
-
-            dentry = dentry->d_parent;
-        }
-    }
-
-    data.type = EVENT_END;
-    events.perf_submit(ctx, &data, sizeof(data));
-    
-
-    return 0;
+    return hook(ctx,filename,flags,ret);
 }
 
 #if defined(CONFIG_ARCH_HAS_SYSCALL_WRAPPER) && !defined(__s390x__)
@@ -100,38 +79,8 @@ KRETFUNC_PROBE(__x64_sys_openat, struct pt_regs *regs, int ret) {
 #else
 KRETFUNC_PROBE(__x64_sys_openat, int dfd, const char __user *filename, int flags, int ret) {
 #endif
-    struct data_t data = collect_data(filename, flags, ret);
 
-    
-    data.type = EVENT_ENTRY;
-    events.perf_submit(ctx, &data, sizeof(data));
-
-    if (data.name[0] != '/') { // Only need to expand relative paths
-        struct task_struct *task;
-        struct dentry *dentry;
-        int i;
-
-        task = (struct task_struct *)bpf_get_current_task_btf();
-        dentry = task->fs->pwd.dentry;
-
-        for (i = 1; i < MAX_ENTRIES; i++) {
-            bpf_probe_read_kernel(&data.name, sizeof(data.name), (void *)dentry->d_name.name);
-            data.type = EVENT_ENTRY;
-            events.perf_submit(ctx, &data, sizeof(data));
-
-            if (dentry == dentry->d_parent) { // At root directory
-                break;
-            }
-
-            dentry = dentry->d_parent;
-        }
-    }
-
-    data.type = EVENT_END;
-    events.perf_submit(ctx, &data, sizeof(data));
-    
-
-    return 0;
+    return hook(ctx,filename,flags,ret);
 }
 
 #ifdef OPENAT2
@@ -149,37 +98,7 @@ KRETFUNC_PROBE(__x64_sys_openat2, struct pt_regs *regs, int ret) {
 KRETFUNC_PROBE(__x64_sys_openat2, int dfd, const char __user *filename, struct open_how __user *how, int ret) {
     int flags = how->flags;
 #endif
-    struct data_t data = collect_data(filename, flags, ret);
 
-    
-    data.type = EVENT_ENTRY;
-    events.perf_submit(ctx, &data, sizeof(data));
-
-    if (data.name[0] != '/') { // Only need to expand relative paths
-        struct task_struct *task;
-        struct dentry *dentry;
-        int i;
-
-        task = (struct task_struct *)bpf_get_current_task_btf();
-        dentry = task->fs->pwd.dentry;
-
-        for (i = 1; i < MAX_ENTRIES; i++) {
-            bpf_probe_read_kernel(&data.name, sizeof(data.name), (void *)dentry->d_name.name);
-            data.type = EVENT_ENTRY;
-            events.perf_submit(ctx, &data, sizeof(data));
-
-            if (dentry == dentry->d_parent) { // At root directory
-                break;
-            }
-
-            dentry = dentry->d_parent;
-        }
-    }
-
-    data.type = EVENT_END;
-    events.perf_submit(ctx, &data, sizeof(data));
-    
-
-    return 0;
+    return hook(ctx,filename,flags,ret);
 }
 #endif

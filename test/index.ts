@@ -1,6 +1,8 @@
 #!/usr/bin/bash
-//`which sjs` <(mtsc -po- -tes2018 -Ilib "$0" | tee index.js) "$@"; exit $?
+//`which sjs` -r <(mtsc -po- -tes2018 -Ilib "$0" | tee index.js) "$@"; exit $?
 //@ts-nocheck
+
+// import {escape} from 'https://deno.land/std@0.224.0/regexp/escape.ts'
 
 if('system' in globalThis) {
     globalThis['Deno'] = globalThis['system'];
@@ -23,6 +25,7 @@ def connect(program,callback,page_cnt=64):
 `);
 
 // https://www.man7.org/linux/man-pages/man7/bpf-helpers.7.html
+// https://github.com/iovisor/bcc/blob/master/docs/reference_guide.md
 
 let srcText = `
 #include <linux/kconfig.h>
@@ -61,7 +64,7 @@ static struct data_t collect_data(const char __user *filename, int flags, int re
     u64 tsp = bpf_ktime_get_ns();
 
     struct bpf_pidns_info ns = {};
-    if(bpf_get_ns_current_pid_tgid(%%DEV%%, %%INO%%, &ns, sizeof(struct bpf_pidns_info)))
+    if(bpf_get_ns_current_pid_tgid(PIDSTAT_DEV, PIDSTAT_INO, &ns, sizeof(struct bpf_pidns_info)))
     	return data;
     
     data.valid = 1;
@@ -72,9 +75,18 @@ static struct data_t collect_data(const char __user *filename, int flags, int re
     data.uid = bpf_get_current_uid_gid();
     data.nspid = ns.pid;
     data.flags = flags;
-    // data.ret = ret;
+    data.ret = ret;
 
     return data;
+}
+
+static int hook(void *ctx, const char __user *filename, int flags, int ret) {
+    struct data_t data = collect_data(filename, flags, ret);
+    if(data.uid == 0 || data.ret < 0) return 0;
+
+    events.perf_submit(ctx, &data, sizeof(data));
+
+    return 0;
 }
 
 #if defined(CONFIG_ARCH_HAS_SYSCALL_WRAPPER) && !defined(__s390x__)
@@ -84,11 +96,8 @@ KRETFUNC_PROBE(%%fn_open%%, struct pt_regs *regs, int ret) {
 #else
 KRETFUNC_PROBE(%%fn_open%%, const char __user *filename, int flags, int ret) {
 #endif
-    struct data_t data = collect_data(filename, flags, ret);
-
-    %%SUBMIT_DATA%%
-
-    return 0;
+    
+    return hook(ctx,filename,flags,ret);
 }
 
 #if defined(CONFIG_ARCH_HAS_SYSCALL_WRAPPER) && !defined(__s390x__)
@@ -99,11 +108,8 @@ KRETFUNC_PROBE(%%fn_openat%%, struct pt_regs *regs, int ret) {
 #else
 KRETFUNC_PROBE(%%fn_openat%%, int dfd, const char __user *filename, int flags, int ret) {
 #endif
-    struct data_t data = collect_data(filename, flags, ret);
 
-    %%SUBMIT_DATA%%
-
-    return 0;
+    return hook(ctx,filename,flags,ret);
 }
 
 #ifdef OPENAT2
@@ -121,55 +127,24 @@ KRETFUNC_PROBE(%%fn_openat2%%, struct pt_regs *regs, int ret) {
 KRETFUNC_PROBE(%%fn_openat2%%, int dfd, const char __user *filename, struct open_how __user *how, int ret) {
     int flags = how->flags;
 #endif
-    struct data_t data = collect_data(filename, flags, ret);
 
-    %%SUBMIT_DATA%%
-
-    return 0;
+    return hook(ctx,filename,flags,ret);
 }
 #endif
 `;
 
 const devinfo = await system.stat('/proc/self/ns/pid');
 const emptyBPF = new BPF(...kwargs({text:''}));
-const syscallPrefix = emptyBPF.get_syscall_prefix().decode();
+const syscallPrefix = `${emptyBPF.get_syscall_prefix().decode()}`;
 
 const parameters = {
-    DEV: devinfo.dev,
-    INO: devinfo.ino,
     // open and openat are always in place since 2.6.16
     fn_open: syscallPrefix + 'open',
     fn_openat: syscallPrefix + 'openat',
-    fn_openat2: syscallPrefix + 'openat2',
-    SUBMIT_DATA: `
-    data.type = EVENT_ENTRY;
-    events.perf_submit(ctx, &data, sizeof(data));
-
-    if (data.name[0] != '/') { // Only need to expand relative paths
-        struct task_struct *task;
-        struct dentry *dentry;
-        int i;
-
-        task = (struct task_struct *)bpf_get_current_task_btf();
-        dentry = task->fs->pwd.dentry;
-
-        for (i = 1; i < MAX_ENTRIES; i++) {
-            bpf_probe_read_kernel(&data.name, sizeof(data.name), (void *)dentry->d_name.name);
-            data.type = EVENT_ENTRY;
-            events.perf_submit(ctx, &data, sizeof(data));
-
-            if (dentry == dentry->d_parent) { // At root directory
-                break;
-            }
-
-            dentry = dentry->d_parent;
-        }
-    }
-
-    data.type = EVENT_END;
-    events.perf_submit(ctx, &data, sizeof(data));
-    ` // The compiler won't let this be a macro since it includes bcc map calls
+    fn_openat2: syscallPrefix + 'openat2'
 }
+
+///#warning incomplete submit data
 
 for(const [key,value] of Object.entries(parameters)) {
     srcText=srcText.replaceAll(`%%${key}%%`,value);
@@ -182,9 +157,24 @@ if(+(emptyBPF.ksymname(parameters.fn_openat2)) != -1) {
 
 system.writeTextFileSync('out.c',srcText);
 
-const program = new BPF(...kwargs({text: srcText}));
+const program = new BPF(...kwargs({
+    text: srcText,
+    cflags: [
+        `-DPIDSTAT_DEV=${devinfo.dev}`,
+        `-DPIDSTAT_INO=${devinfo.ino}`,
+
+        
+        // `-DFN_OPEN=${syscallPrefix}open`,
+        // `-DFN_OPENAT=${syscallPrefix}openat`,
+        // `-DFN_OPENAT2=${syscallPrefix}openat2`,
+        // `-DPSYSCALL(NAME)=${syscallPrefix}${syscallPrefix ? '##' : ''}NAME`
+    ]
+}));
+
 connect(program, new Callback(function(kwargs,event) {
-    console.log(event.name.decode())
+    const name = `${event.name.decode()}`;
+    if(name.startsWith('/proc/') || name.startsWith('/etc/') || name.startsWith('/dev/')) return;
+    console.log(name)
 }),64);
 
 while(true) {
