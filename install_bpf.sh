@@ -10,15 +10,14 @@ git clone --depth 1 https://github.com/microsoft/WSL2-Linux-Kernel.git -b linux-
 cd WSL2-Linux-Kernel
 
 cp Microsoft/config-wsl .config
-echo >> .config
-echo 'CONFIG_IKHEADERS=m' >> .config
+echo -e '\nCONFIG_IKHEADERS=m' >> .config
 make oldconfig && make prepare
 make scripts
 make modules
 sudo make modules_install
 
 mkdir -p /lib/modules/$KERNEL_VERSION-microsoft-standard-WSL2/
-mv /lib/modules/$KERNEL_VERSION-microsoft-standard-WSL2+/* /lib/modules/$KERNEL_VERSION-microsoft-standard-WSL2/
+cp -r /lib/modules/$KERNEL_VERSION-microsoft-standard-WSL2+/* /lib/modules/$KERNEL_VERSION-microsoft-standard-WSL2/
 # sudo rm -rf /lib/modules/5.15.146.1-microsoft-standard-WSL2+
 
 

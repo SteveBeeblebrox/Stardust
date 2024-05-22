@@ -22,6 +22,8 @@ KRETFUNC_PROBE(__x64_sys_open, const char __user *filename, int flags, int ret) 
     
     events.perf_submit(ctx, &data, sizeof(data));
 
+    bpf_trace_printk("Hello");
+
     return 0;
 }
 

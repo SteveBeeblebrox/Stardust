@@ -14,8 +14,10 @@ static struct data_t collect_data(const char __user *filename, int flags, int re
 
 KRETFUNC_PROBE(__x64_sys_open, const char __user *filename, int flags, int ret) {
     struct data_t data = collect_data(filename, flags, ret);
-
+    
     events.perf_submit(ctx, &data, sizeof(data));
+
+    bpf_trace_printk("Hello");
 
     return 0;
 }

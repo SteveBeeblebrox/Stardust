@@ -12,3 +12,7 @@ libbpf-dev
 
 https://github.com/sai-lab/syscall-exporter/tree/main
 linux-tools-common
+
+
+python3-dev
+python -m pip install --upgrade pip

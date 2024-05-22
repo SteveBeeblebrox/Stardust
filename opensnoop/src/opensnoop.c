@@ -14,6 +14,7 @@ struct data_t {
     char comm[TASK_COMM_LEN];
     char fname[NAME_MAX];
 };
+
 BPF_HASH(infotmp, u64, struct val_t);
 BPF_PERF_OUTPUT(events);
 int trace_entry(struct pt_regs *ctx, int dfd, const char __user *filename)
