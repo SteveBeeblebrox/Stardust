@@ -190,6 +190,12 @@ def on_data(cpu, data, size):
     if event.ret < 0:
         return
 
+    # name = event.name.decode();
+    # if event.type == EventType.EVENT_END and (
+    #     name.startswith('/proc/') or name.startswith('/etc/') or name.startswith('/dev/')
+    # ): 
+    #     return
+
     if event.type == EventType.EVENT_END:
 
         # Split return value into fd and errno
