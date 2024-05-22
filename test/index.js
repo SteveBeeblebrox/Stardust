@@ -8,7 +8,6 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
 };
 var _PyObject_pyMethodDef;
-// import { pip } from "https://deno.land/x/python/ext/pip.ts";
 if ('system' in globalThis) {
     globalThis['Deno'] = globalThis['system'];
 }
@@ -18,10 +17,6 @@ else {
 function kwargs(args) {
     return Object.entries(args).map(([k, v]) => new NamedArgument(k, v));
 }
-// console.log(await system.lstat('/usr/lib/x86_64-linux-gnu/libpython3.10.so.1.0'))
-// for await (const entry of system.readDir('/usr/lib/x86_64-linux-gnu/')) {
-//     if((entry.name as string).includes('py')) console.log(entry)
-// }
 const SYMBOLS = {
     Py_Initialize: {
         parameters: [],
@@ -1068,13 +1063,33 @@ function toSlice(sliceList) {
         return new PyObject(pySliceHandle);
     }
 }
-console.log(python);
 const { BPF } = python.import('bcc');
 const program = new BPF(...kwargs({ text: `
+#include <linux/kconfig.h>
 #include <uapi/linux/ptrace.h>
+#include <uapi/linux/limits.h>
+#include <linux/sched.h>
+#include <linux/fs_struct.h>
+#include <linux/dcache.h>
+
+#define MAX_ENTRIES 32
+
+enum event_type {
+    EVENT_ENTRY,
+    EVENT_END,
+};
 
 struct data_t {
     u8 valid;
+    u64 id; //[pid tid]
+    u64 ts;
+    u32 uid;
+    u32 nspid;
+    int ret;
+    char comm[TASK_COMM_LEN];
+    enum event_type type;
+    char name[NAME_MAX];
+    int flags;
 };
 
 BPF_PERF_OUTPUT(events);
@@ -1095,30 +1110,16 @@ KRETFUNC_PROBE(__x64_sys_open, const char __user *filename, int flags, int ret) 
     return 0;
 }
 ` }));
-// function callback(...args: any) {
-//     console.log(args)
-// }
-// console.log(program['events'])
-// console.log(program['events'])
-// console.log(program['events'])//.open_perf_buffer(callback,...kwargs({page_cnt:64}));
-// while(true) {
-//     program.perf_buffer_poll();
-// }
-// // import { python, NamedArgument } from "https://deno.land/x/python/mod.ts";
-const { pyget } = python.runModule(`
-def pyget(obj,key):
-    return obj[key];
+const { connect } = python.runModule(`
+def connect(program,callback,page_cnt=64):
+    program["events"].open_perf_buffer(
+        lambda cpu,data,size: callback(program["events"].event(data)),
+        page_cnt=page_cnt
+    );
 `);
-const { getEvent } = python.runModule(`
-def getEvent(program,data):
-    event = program["events"].event(data);
-    print(event.valid)
-`);
-pyget(program, 'events').open_perf_buffer(new Callback(function (_, cpu, data, size) {
-    console.log(arguments);
-}), ...kwargs({ page_cnt: 64 }));
+connect(program, new Callback(function (kwargs, event) {
+    console.log(event.valid);
+}), 64);
 while (true) {
     program.perf_buffer_poll();
 }
-// console.log(doit(program))
-// console.log(python.builtins.getattr(program,PyObject.from('[events]').toSlice()))
