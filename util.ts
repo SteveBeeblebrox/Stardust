@@ -44,3 +44,17 @@ export function error(error: any, prefix: string = 'Error') {
 export function warn(warning: any, prefix: string = 'Warning') {
     console.error(`${Colors.yellow(prefix+':')}`, warning);
 }
+
+export class Version {
+    constructor(
+        public readonly major: number = 1,
+        public readonly minor: number = 0,
+        public readonly patch: number = 0,
+        public readonly prerelease?: string,
+        public readonly metadata?: string
+    ) {}
+
+    public override toString(): string {
+        return `v${this.major}.${this.minor}.${this.patch}${this.prerelease !== undefined ? `-${this.prerelease}` : ''}${this.metadata !== undefined ? `+${this.metadata}` : ''}`;
+    }
+}

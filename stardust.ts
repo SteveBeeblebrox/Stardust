@@ -3,7 +3,7 @@
 // @ts-nocheck
 ///#pragma once
 
-declare var system;
+declare var system: typeof Deno;
 
 import { Colors } from "./deps.ts";
 import * as Util from "./util.ts";

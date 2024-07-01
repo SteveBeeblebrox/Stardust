@@ -1,0 +1,26 @@
+{
+    "imports": {
+        "jsr:@std/path@0.217": "https://jsr.io/@std/path/0.217.0/mod.ts",
+        "jsr:@denosaurs/plug@1": "https://jsr.io/@denosaurs/plug/1.0.6/mod.ts",
+        "jsr:@std/path@^0.221.0": "https://jsr.io/@std/path/0.221.0/mod.ts",
+        "jsr:@std/fs@^0.221.0": "https://jsr.io/@std/fs/0.221.0/mod.ts",
+        "jsr:@std/fmt@^0.221.0/colors": "https://jsr.io/@std/fmt/0.221.0/colors.ts",
+        "jsr:/@std/assert@^0.217.0/assert": "https://jsr.io/@std/assert/0.217.0/assert.ts",
+        "jsr:/@std/assert@^0.221.0/assert": "https://jsr.io/@std/assert/0.221.0/assert.ts",
+        "jsr:@std/encoding@^0.221.0/hex": "https://jsr.io/@std/encoding/0.221.0/hex.ts",
+        "jsr:/@std/path@^0.221.0/join": "https://jsr.io/@std/path/0.221.0/join.ts",
+        "jsr:/@std/path@^0.221.0/dirname": "https://jsr.io/@std/path/0.221.0/dirname.ts",
+        "jsr:/@std/path@^0.221.0/resolve": "https://jsr.io/@std/path/0.221.0/resolve.ts",
+        "jsr:/@std/path@^0.221.0/normalize": "https://jsr.io/@std/path/0.221.0/normalize.ts",
+        "jsr:/@std/path@^0.221.0/glob-to-regexp": "https://jsr.io/@std/path/0.221.0/glob_to_regexp.ts",
+        "jsr:/@std/path@^0.221.0/join-globs": "https://jsr.io/@std/path/0.221.0/join_globs.ts",
+        "jsr:/@std/path@^0.221.0/is-glob": "https://jsr.io/@std/path/0.221.0/is_glob.ts",
+        "jsr:/@std/path@^0.221.0/is-absolute": "https://jsr.io/@std/path/0.221.0/is_absolute.ts",
+        "jsr:/@std/path@^0.221.0/constants": "https://jsr.io/@std/path/0.221.0/constants.ts",
+        "jsr:/@std/path@^0.221.0/basename": "https://jsr.io/@std/path/0.221.0/basename.ts",
+        "jsr:/@std/path@^0.221.0/from-file-url": "https://jsr.io/@std/path/0.221.0/from_file_url.ts"
+    },
+    "scopes": {
+        
+    }
+}
