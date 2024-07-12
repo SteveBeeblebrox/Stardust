@@ -20,6 +20,9 @@ Util.setSigIntHandler(function() {
     }
 });
 
+
+new Worker(import.meta.resolve("./sdb/sdb.ts"), {type: 'module', name:'sdb'});
+
 console.log(`${Colors.bold('Stardust Alpha')}`);
 console.log(`(c) 2024 Trin Wasinger`);
 

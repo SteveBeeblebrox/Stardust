@@ -1,0 +1,434 @@
+{
+  "author": "Trin Wasinger",
+  "title": "Stardust",
+  "date": "2024-07-12T00:19:32.298Z",
+  "tables": [
+    {
+      "id": 0,
+      "name": "FileWrite",
+      "x": 5.778698732031216,
+      "y": 59.185799154687516,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "trace",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 1,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "process",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 2,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "file",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 3,
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#6360f7",
+      "key": 1720740315374
+    },
+    {
+      "id": 1,
+      "name": "ImmutableTrace",
+      "x": -0.3235052351565173,
+      "y": -185.57068937656277,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "created",
+          "type": "DATETIME",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 1,
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#ff4f81",
+      "key": 1720740583702
+    },
+    {
+      "id": 2,
+      "name": "Process",
+      "x": -464.99319486484376,
+      "y": 184.0124632554689,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "trace",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 1,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "origin",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 2,
+          "size": 65535
+        },
+        {
+          "name": "parent",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 3,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "user",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 4,
+          "size": 65535
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#175e7a",
+      "key": 1720740673800
+    },
+    {
+      "id": 3,
+      "name": "FileRead",
+      "x": 11.221301267968784,
+      "y": 286.65561521562506,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "trace",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 1,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "process",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 2,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "file",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 3,
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#6360f7",
+      "key": 1720741075390
+    },
+    {
+      "id": 4,
+      "name": "File",
+      "x": 442.62591107500043,
+      "y": 215.60588368593778,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "trace",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 1,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "path",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 2,
+          "size": 65535,
+          "values": []
+        },
+        {
+          "name": "hash",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": 3,
+          "size": 65535
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#175e7a",
+      "key": 1720741350240
+    }
+  ],
+  "relationships": [
+    {
+      "startTableId": 2,
+      "startFieldId": 1,
+      "endTableId": 1,
+      "endFieldId": 0,
+      "cardinality": "One to one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "Process_trace_fk",
+      "id": 0
+    },
+    {
+      "startTableId": 0,
+      "startFieldId": 1,
+      "endTableId": 1,
+      "endFieldId": 0,
+      "cardinality": "One to one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "FileWrite_trace_fk",
+      "id": 1
+    },
+    {
+      "startTableId": 3,
+      "startFieldId": 1,
+      "endTableId": 1,
+      "endFieldId": 0,
+      "cardinality": "One to one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "FileRead_trace_fk",
+      "id": 2
+    },
+    {
+      "startTableId": 4,
+      "startFieldId": 1,
+      "endTableId": 1,
+      "endFieldId": 0,
+      "cardinality": "One to one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "File_trace_fk",
+      "id": 3
+    },
+    {
+      "startTableId": 0,
+      "startFieldId": 2,
+      "endTableId": 2,
+      "endFieldId": 0,
+      "cardinality": "One to one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "FileWrite_process_fk",
+      "id": 4
+    },
+    {
+      "startTableId": 3,
+      "startFieldId": 2,
+      "endTableId": 2,
+      "endFieldId": 0,
+      "cardinality": "One to one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "FileRead_process_fk",
+      "id": 5
+    },
+    {
+      "startTableId": 3,
+      "startFieldId": 3,
+      "endTableId": 4,
+      "endFieldId": 0,
+      "cardinality": "One to one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "FileRead_file_fk",
+      "id": 6
+    },
+    {
+      "startTableId": 2,
+      "startFieldId": 3,
+      "endTableId": 2,
+      "endFieldId": 0,
+      "cardinality": "One to one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "Process_parent_fk",
+      "id": 7
+    },
+    {
+      "startTableId": 0,
+      "startFieldId": 3,
+      "endTableId": 4,
+      "endFieldId": 0,
+      "cardinality": "One to one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "FileWrite_file_fk",
+      "id": 8
+    }
+  ],
+  "notes": [],
+  "subjectAreas": [
+    {
+      "id": 0,
+      "name": "ACTIONS",
+      "x": -15,
+      "y": 14,
+      "width": 253.25680338124994,
+      "height": 504.8331257820313,
+      "color": "#6360f7"
+    }
+  ],
+  "database": "sqlite"
+}
