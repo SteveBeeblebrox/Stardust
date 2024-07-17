@@ -3,5 +3,5 @@ export function POST(request) {
 }
 
 export function GET(request) {
-    console.log('GET', request.args)
+    return new Response(~~(Math.random()*+(request.args.n)))
 }

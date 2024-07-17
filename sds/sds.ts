@@ -1,6 +1,6 @@
 #!/usr/local/bin/sjs -r
 //@ts-check
-const url = new URL('https://example.com' + system.args.at(1));
+const url = ;
 console.log(`Routing ${url}`);
 
 
